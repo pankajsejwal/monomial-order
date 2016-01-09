@@ -1,0 +1,85 @@
+
+load("ratpow.lisp")$
+
+load("simplifying");
+
+ordersort(lis,vars,oper):=block([liss:lis,varlist:vars,temp], /*Does lexicographical sort */
+for i:1 thru length(varlist) do (
+    for j:1 thru i do (
+        liss:sort(liss,lambda([x,y],apply("and",map(oper,makelist(part(x,2)[k],k,1,i)
+                            ,makelist(part(y,2)[k],k,1,i)))))
+    )),liss)$
+
+create_mypoly(lis,var):=block([poly_return_term_list:true,temp:[],intem:[],coefl:map(last,lis),firlist:map(first,lis)], /* Convert to polynomial from intermediate poly representation */
+for item in coefl do (  
+    temp:(append (temp, [map(lambda([s,d],if(s#0) then apply("^",[d,s]) else 1),item,var)]))),
+    temp:map(lambda([d],apply("*",d)),temp), 
+    simpfunmake(verbify("+"),reverse(map(lambda([a,b],a*b),temp,firlist)))
+)$
+
+:lisp(defun $poly2coefarr(p)
+   (let* ((temp nil)(r (ratf p))           
+      (den (cddr r))          
+      (pairlist (cdadr r))) 
+        (setf temp (cons temp (last (flatten pairlist)))) (flatten temp)))
+
+:lisp(defun flatten (structure)
+  (cond ((null structure) nil)
+        ((atom structure) (list structure))
+        (t (mapcan #'flatten structure))))
+
+:lisp(defun $poly2coeflist(p)
+   ($flatten (cons '(mlist) (coerce ($poly2coefarr p) 'list))))
+
+totallexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], /* Does degreelexicographical sort */
+temp:map(lambda([w],append(w,[apply("+",last(w))])),lis),
+temp:sort(temp,lambda([x,y],is(last(x)>=last(y)))), 
+for it in reverse(unique(map(last,temp))) do
+     (temp2:append(temp2,[takewhile(temp,lambda([x],last(x)=it))])), 
+temp2:map(lambda([a],if(length(a)>1) then ordersort(map(lambda([b],[first(b),second(b)]),a),var,oper)
+        else a),temp2),
+temp:[],
+for item in temp2 do temp:append(reverse(item),temp), 
+temp:map(lambda([x],[first(x),second(x)]),reverse(temp)))$
+
+takewhile(lst, pr):= block([c: []],
+  reverse(catch(for idx thru length(lst) do block([el:part(lst, idx)],
+        if not pr(el) and not emptyp(c) then throw(c)
+        else if pr(el) then push(el,c)),
+      c)))$
+
+grevlexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], /* Graded reverse lexicographical sort */
+temp:map(lambda([w],append(w,[apply("+",last(w))])),lis),
+temp:sort(temp,lambda([x,y],is(last(x)>=last(y)))), 
+for it in reverse(unique(map(last,temp))) do
+     (temp2:append(temp2,[takewhile(temp,lambda([x],last(x)=it))])), 
+temp2:map(lambda([a],if(length(a)>1) then 
+            map(lambda([s],[first(s),reverse(second(s))]),ordersort(map(lambda([b],[first(b),reverse(second(b))]),a),var,">="))
+        else a),temp2),
+temp:[], 
+for item in temp2 do temp:append(item,temp), 
+temp:map(lambda([x],[first(x),second(x)]),reverse(temp)))$
+
+lex(poly,lis,msort):=block([final:[],temp:[],coeflist,len:length(args(poly))],/*Convert a poly to intermediate representation as 10*x^2*y -> [10,[2,1,0]]*/
+if(polynomialp(poly,listofvars(poly)) and listp(lis)) then (
+        for i:1 thru length(lis) do (
+temp:map(lambda([zzz],ratp_coeffs(zzz,part(lis,i))[1][1]),args(poly)), 
+         final:append(final,[flatten(temp)])),
+        final:args(transpose(apply(matrix,final))),
+        coeflist:flatten(map(poly2coeflist,args(poly))), temp:[],
+        for i:1 thru length(coeflist) do temp:append([[part(coeflist,i),part(final,i)]],temp), 
+   apply(msort,[temp,lis,">="])))$
+
+grevlexOrdering(poly,var):=block([temp],temp:lex(poly,var,grevlexordersort),create_mypoly(temp,var))$
+
+lexOrdering(poly,var):=block([temp],temp:lex(poly,var,ordersort),create_mypoly(temp,var))$
+
+invlexOrdering(poly,var):=block([temp],temp:lex(poly,reverse(var),ordersort),create_mypoly(temp,reverse(var)))$
+
+neglexOrdering(poly,var):=block([temp],temp:lex(poly,var,ordersort),create_mypoly(reverse(temp),var))$
+
+revlexOrdering(poly,var):=block([temp],temp:lex(poly,reverse(var),ordersort),(create_mypoly(reverse(temp),reverse(var))))$
+
+deglexOrdering(poly,var):=block([poly_return_term_list:true,temp,final],
+temp:lex(poly,var,totallexordersort),create_mypoly(temp,var))$
+
