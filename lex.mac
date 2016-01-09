@@ -70,6 +70,7 @@ temp:map(lambda([zzz],ratp_coeffs(zzz,part(lis,i))[1][1]),args(poly)),
         for i:1 thru length(coeflist) do temp:append([[part(coeflist,i),part(final,i)]],temp), 
    apply(msort,[temp,lis,">="])))$
 
+/*-----------Methods for user interface-------------*/
 /* Graded reverse lex ordering */
 grevlexOrdering(poly,var):=block([temp],temp:lex(poly,var,grevlexordersort),create_mypoly(temp,var))$
 
