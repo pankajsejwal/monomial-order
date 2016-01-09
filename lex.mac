@@ -70,16 +70,22 @@ temp:map(lambda([zzz],ratp_coeffs(zzz,part(lis,i))[1][1]),args(poly)),
         for i:1 thru length(coeflist) do temp:append([[part(coeflist,i),part(final,i)]],temp), 
    apply(msort,[temp,lis,">="])))$
 
+/* Graded reverse lex ordering */
 grevlexOrdering(poly,var):=block([temp],temp:lex(poly,var,grevlexordersort),create_mypoly(temp,var))$
 
+/*lex ordering */
 lexOrdering(poly,var):=block([temp],temp:lex(poly,var,ordersort),create_mypoly(temp,var))$
 
+/* Inverse lex ordering */
 invlexOrdering(poly,var):=block([temp],temp:lex(poly,reverse(var),ordersort),create_mypoly(temp,reverse(var)))$
 
+/*Negative Lex ordering */
 neglexOrdering(poly,var):=block([temp],temp:lex(poly,var,ordersort),create_mypoly(reverse(temp),var))$
 
+/*reverse lex ordering*/
 revlexOrdering(poly,var):=block([temp],temp:lex(poly,reverse(var),ordersort),(create_mypoly(reverse(temp),reverse(var))))$
 
+/* Degree lex ordering */
 deglexOrdering(poly,var):=block([poly_return_term_list:true,temp,final],
 temp:lex(poly,var,totallexordersort),create_mypoly(temp,var))$
 
