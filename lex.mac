@@ -10,28 +10,32 @@ for i:1 thru length(varlist) do (
                             ,makelist(part(y,2)[k],k,1,i)))))
     )),liss)$
 
-create_mypoly(lis,var):=block([poly_return_term_list:true,temp:[],intem:[],coefl:map(last,lis),firlist:map(first,lis)], /* Convert to polynomial from intermediate poly representation */
+create_mypoly(lis,var):=block([temp:[],intem:[],coefl:map(last,lis),firlist:map(first,lis)], /* Convert to polynomial from intermediate poly representation */
 for item in coefl do (  
     temp:(append (temp, [map(lambda([s,d],if(s#0) then apply("^",[d,s]) else 1),item,var)]))),
     temp:map(lambda([d],apply("*",d)),temp), 
     simpfunmake(verbify("+"),reverse(map(lambda([a,b],a*b),temp,firlist)))
 )$
 
-:lisp(defun $poly2coefarr(p)
+/* Collect the integer part of monomials list of polynomial */
+:lisp(defun $poly2coefarr(p) 
    (let* ((temp nil)(r (ratf p))           
       (den (cddr r))          
       (pairlist (cdadr r))) 
         (setf temp (cons temp (last (flatten pairlist)))) (flatten temp)))
 
+/* Flatten a lisp list */
 :lisp(defun flatten (structure)
   (cond ((null structure) nil)
         ((atom structure) (list structure))
         (t (mapcan #'flatten structure))))
 
+/* Convert lisp array to list */
 :lisp(defun $poly2coeflist(p)
    ($flatten (cons '(mlist) (coerce ($poly2coefarr p) 'list))))
 
-totallexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], /* Does degreelexicographical sort */
+/* Does degreelexicographical sort */
+totallexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], 
 temp:map(lambda([w],append(w,[apply("+",last(w))])),lis),
 temp:sort(temp,lambda([x,y],is(last(x)>=last(y)))), 
 for it in reverse(unique(map(last,temp))) do
@@ -48,7 +52,8 @@ takewhile(lst, pr):= block([c: []],
         else if pr(el) then push(el,c)),
       c)))$
 
-grevlexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], /* Graded reverse lexicographical sort */
+/* Graded reverse lexicographical sort */
+grevlexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], 
 temp:map(lambda([w],append(w,[apply("+",last(w))])),lis),
 temp:sort(temp,lambda([x,y],is(last(x)>=last(y)))), 
 for it in reverse(unique(map(last,temp))) do
@@ -60,7 +65,8 @@ temp:[],
 for item in temp2 do temp:append(item,temp), 
 temp:map(lambda([x],[first(x),second(x)]),reverse(temp)))$
 
-lex(poly,lis,msort):=block([final:[],temp:[],coeflist,len:length(args(poly))],/*Convert a poly to intermediate representation as 10*x^2*y -> [10,[2,1,0]]*/
+/*Convert a poly to intermediate representation as 10*x^2*y -> [10,[2,1,0]]*/
+lex(poly,lis,msort):=block([final:[],temp:[],coeflist,len:length(args(poly))],
 if(polynomialp(poly,listofvars(poly)) and listp(lis)) then (
         for i:1 thru length(lis) do (
 temp:map(lambda([zzz],ratp_coeffs(zzz,part(lis,i))[1][1]),args(poly)), 
@@ -87,6 +93,5 @@ neglexOrdering(poly,var):=block([temp],temp:lex(poly,var,ordersort),create_mypol
 revlexOrdering(poly,var):=block([temp],temp:lex(poly,reverse(var),ordersort),(create_mypoly(reverse(temp),reverse(var))))$
 
 /* Degree lex ordering */
-deglexOrdering(poly,var):=block([poly_return_term_list:true,temp,final],
-temp:lex(poly,var,totallexordersort),create_mypoly(temp,var))$
+deglexOrdering(poly,var):=block([temp],temp:lex(poly,var,totallexordersort),create_mypoly(temp,var))$
 
