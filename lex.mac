@@ -51,6 +51,19 @@ takewhile(lst, pr):= block([c: []],
         if not pr(el) and not emptyp(c) then throw(c)
         else if pr(el) then push(el,c)),
       c)))$
+   
+/* graded lexicographic sort */   
+glexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], /* Graded reverse lexicographical sort */
+temp:map(lambda([w],append(w,[apply("+",last(w))])),lis),
+temp:sort(temp,lambda([x,y],is(last(x)>=last(y)))), 
+for it in reverse(unique(map(last,temp))) do
+     (temp2:append(temp2,[takewhile(temp,lambda([x],last(x)=it))])), 
+temp2:map(lambda([a],if(length(a)>1) then 
+            ordersort(map(lambda([b],[first(b),second(b)]),a),var,">=")
+        else a),temp2), 
+temp:[], 
+for item in temp2 do temp:append(reverse(item),temp), 
+temp:map(lambda([x],[first(x),second(x)]),reverse(temp)))$
 
 /* Graded reverse lexicographical sort */
 grevlexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], 
@@ -77,6 +90,11 @@ temp:map(lambda([zzz],ratp_coeffs(zzz,part(lis,i))[1][1]),args(poly)),
    apply(msort,[temp,lis,">="])))$
 
 /*-----------Methods for user interface-------------*/
+
+/* Graded lexicographic sort */
+glexOrdering(poly,var):=block([temp],
+temp:lex(poly,var,glexordersort),create_mypoly(temp,var))$
+
 /* Graded reverse lex ordering */
 grevlexOrdering(poly,var):=block([temp],temp:lex(poly,var,grevlexordersort),create_mypoly(temp,var))$
 
