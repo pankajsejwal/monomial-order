@@ -19,10 +19,13 @@ for item in coefl do (
 
 /* Collect the integer part of monomials list of polynomial */
 :lisp(defun $poly2coefarr(p) 
-   (let* ((temp nil)(r (ratf p))           
+   (if (listp p) (progn 
+    (let* ((temp nil)(r (ratf p))           
       (den (cddr r))          
       (pairlist (cdadr r))) 
-        (setf temp (cons temp (last (flatten pairlist)))) (flatten temp)))
+        (setf temp (cons temp (last (flatten pairlist)))) 
+        (setf temp (mapcar #'(lambda(x)(div x den)) temp)) 
+         )) p))
 
 /* Flatten a lisp list */
 :lisp(defun flatten (structure)
@@ -32,7 +35,11 @@ for item in coefl do (
 
 /* Convert lisp array to list */
 :lisp(defun $poly2coeflist(p)
-   ($flatten (cons '(mlist) (coerce ($poly2coefarr p) 'list))))
+    (let* ((temp (last ($poly2coefarr p))))
+   (cond ((eql (length temp) 1) temp)
+         ((> (length temp) 1) 
+                    (div (nth (- (length temp) 2) temp)(nth (- (length temp) 1) temp)))) 
+         (cons '(mlist) temp)))
 
 /* Does degreelexicographical sort */
 totallexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], 
