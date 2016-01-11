@@ -34,12 +34,13 @@ for item in coefl do (
         (t (mapcan #'flatten structure))))
 
 /* Convert lisp array to list */
-:lisp(defun $poly2coeflist(p)
-    (let* ((temp (last ($poly2coefarr p))))
+:lisp(defun $poly2coeflist(p) 
+    (let* ((temp ($poly2coefarr p))) 
+        (if (listp temp) (progn (setf temp (last temp)) 
    (cond ((eql (length temp) 1) temp)
          ((> (length temp) 1) 
-                    (div (nth (- (length temp) 2) temp)(nth (- (length temp) 1) temp)))) 
-         (cons '(mlist) temp)))
+                    (div (nth (- (length temp) 2) temp)(nth (- (length temp) 1) temp))))) temp)
+        (if (atom temp) temp (cons '(mlist) temp))))
 
 /* Does degreelexicographical sort */
 totallexordersort(lis,var,oper):=block([liss:lis,varlist:vars,temp,temp2:[]], 
