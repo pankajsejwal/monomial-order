@@ -100,23 +100,23 @@ temp:map(lambda([zzz],ratp_coeffs(zzz,part(lis,i))[1][1]),args(poly)),
 
 /* Graded lexicographic sort */
 glexOrdering(poly,var):=block([temp],
-temp:lex(poly,var,glexordersort),create_mypoly(temp,var))$
+temp:lex(expand(poly),var,glexordersort),create_mypoly(temp,var))$
 
 /* Graded reverse lex ordering */
-grevlexOrdering(poly,var):=block([temp],temp:lex(poly,var,grevlexordersort),create_mypoly(temp,var))$
+grevlexOrdering(poly,var):=block([temp],temp:lex(expand(poly),var,grevlexordersort),create_mypoly(temp,var))$
 
 /*lex ordering */
-lexOrdering(poly,var):=block([temp],temp:lex(poly,var,ordersort),create_mypoly(temp,var))$
+lexOrdering(poly,var):=block([temp],temp:lex(expand(poly),var,ordersort),create_mypoly(temp,var))$
 
 /* Inverse lex ordering */
-invlexOrdering(poly,var):=block([temp],temp:lex(poly,reverse(var),ordersort),create_mypoly(temp,reverse(var)))$
+invlexOrdering(poly,var):=block([temp],temp:lex(expand(poly),reverse(var),ordersort),create_mypoly(temp,reverse(var)))$
 
 /*Negative Lex ordering */
-neglexOrdering(poly,var):=block([temp],temp:lex(poly,var,ordersort),create_mypoly(reverse(temp),var))$
+neglexOrdering(poly,var):=block([temp],temp:lex(expand(poly),var,ordersort),create_mypoly(reverse(temp),var))$
 
 /*reverse lex ordering*/
-revlexOrdering(poly,var):=block([temp],temp:lex(poly,reverse(var),ordersort),(create_mypoly(reverse(temp),reverse(var))))$
+revlexOrdering(poly,var):=block([temp],temp:lex(expand(poly),reverse(var),ordersort),(create_mypoly(reverse(temp),reverse(var))))$
 
 /* Degree lex ordering */
-deglexOrdering(poly,var):=block([temp],temp:lex(poly,var,totallexordersort),create_mypoly(temp,var))$
+deglexOrdering(poly,var):=block([temp],temp:lex(expand(poly),var,totallexordersort),create_mypoly(temp,var))$
 
