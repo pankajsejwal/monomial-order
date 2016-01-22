@@ -10,7 +10,7 @@ for i:1 thru length(varlist) do (
                             ,makelist(part(y,2)[k],k,1,i)))))
     )),liss)$
 
-create_mypoly(lis,var):=block([temp:[],intem:[],coefl:map(last,lis),firlist:map(first,lis)], /* Convert to polynomial from intermediate poly representation */
+create_mypoly(lis,var):=block([negsumdispflag:false,temp:[],intem:[],coefl:map(last,lis),firlist:map(first,lis)], /* Convert to polynomial from intermediate poly representation */
 for item in coefl do (  
     temp:(append (temp, [map(lambda([s,d],if(s#0) then apply("^",[d,s]) else 1),item,var)]))),
     temp:map(lambda([d],apply("*",d)),temp), 
