@@ -1,4 +1,4 @@
-Don't forget to put '*', sign of multiplication on maxima.
+Don't forget to put '*', sign of multiplication on maxima. Execute the lisp snippets before maxima code.
 
 poly : -10*x^3*y^4*z^7+7*x^3*y^8*z^9-7*x^3*y^5*z^4-10*x^2*y^2*z^5+6*x^4*y^4*z^3+6*x^4*y^3*z^3+y^4*z+2*z^5+3*x*y^2*z-7*y^2*z;
 
